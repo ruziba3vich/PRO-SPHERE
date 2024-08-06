@@ -39,3 +39,15 @@ func (c *CurrencyHandler) GetCurrencyByCcy(ctx *gin.Context) {
 	}
 	ctx.IndentedJSON(http.StatusOK, response)
 }
+
+func (c *CurrencyHandler) GetAllCurrenciesHandler(ctx *gin.Context) {
+	response, err := c.storage.GetAllCurrencies()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errors.ProError{
+			Message: "service returned an error while retrieving the data",
+			Err:     err.Error(),
+		})
+		return
+	}
+	ctx.IndentedJSON(http.StatusOK, response)
+}

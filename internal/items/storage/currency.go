@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/ruziba3vich/prosphere/internal/items/config"
@@ -13,16 +14,45 @@ import (
 type (
 	CurrencyStorage struct {
 		config *config.Config
+		logger *log.Logger
 	}
 )
 
-func NewCurrencyStorage(cfg *config.Config) *CurrencyStorage {
+func NewCurrencyStorage(cfg *config.Config, logger *log.Logger) *CurrencyStorage {
 	return &CurrencyStorage{
 		config: cfg,
+		logger: logger,
 	}
 }
 
 func (c *CurrencyStorage) GetCurrencyByCcy(req *vidgets.GetCurrencyByCcyRequest) (*vidgets.CurrencyData, error) {
+	data, err := c.getAllCurrencyData()
+	if err != nil {
+		c.logger.Println(err.Error())
+		return nil, err
+	}
+	for _, currency := range data {
+		if currency.Ccy == req.Ccy {
+			return currency, nil
+		}
+	}
+
+	return nil, fmt.Errorf("currency not found: %s", req.Ccy)
+}
+
+func (c *CurrencyStorage) GetAllCurrencies() (*vidgets.GetAllCurrenciesResponse, error) {
+	data, err := c.getAllCurrencyData()
+	if err != nil {
+		c.logger.Println(err.Error())
+		return nil, err
+	}
+	var response vidgets.GetAllCurrenciesResponse
+
+	response.Response = append(response.Response, data...)
+	return &response, nil
+}
+
+func (c *CurrencyStorage) getAllCurrencyData() ([]*vidgets.CurrencyData, error) {
 	resp, err := http.Get(c.config.Apis.CurrencyApi)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request: %s", err.Error())
@@ -42,16 +72,5 @@ func (c *CurrencyStorage) GetCurrencyByCcy(req *vidgets.GetCurrencyByCcyRequest)
 	if err := json.Unmarshal(body, &data); err != nil {
 		return nil, fmt.Errorf("failed to parse response: %s", err.Error())
 	}
-
-	for _, currency := range data {
-		if currency.Ccy == req.Ccy {
-			return currency, nil
-		}
-	}
-
-	return nil, fmt.Errorf("currency not found: %s", req.Ccy)
-}
-
-func (c *CurrencyStorage) GetAllCurrencies() (*vidgets.GetAllCurrenciesResponse, error) {
-	return nil, nil
+	return data, nil
 }

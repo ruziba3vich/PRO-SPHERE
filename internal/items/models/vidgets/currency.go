@@ -20,7 +20,7 @@ type (
 	}
 
 	GetAllCurrenciesResponse struct {
-		Response []CurrencyData `json:"response"`
+		Response []*CurrencyData `json:"response"`
 	}
 )
 

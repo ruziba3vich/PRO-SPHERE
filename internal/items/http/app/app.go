@@ -16,7 +16,7 @@ func Run(cfg *config.Config,
 
 	// storages
 
-	currencyStorage := storage.NewCurrencyStorage(cfg)
+	currencyStorage := storage.NewCurrencyStorage(cfg, logger)
 
 	// handlers
 
@@ -25,6 +25,9 @@ func Run(cfg *config.Config,
 	// routers
 
 	router.GET("/currency/:ccy", currencyHandler.GetCurrencyByCcy)
+	router.GET("/currency", currencyHandler.GetAllCurrenciesHandler)
+
+	// run
 	if err := router.Run(cfg.Server.Port); err != nil {
 		logger.Fatal(err)
 	}
