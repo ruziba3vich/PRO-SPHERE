@@ -9,7 +9,7 @@ type (
 		PostShortContent  string `json:"post_short_content"`
 		PostContent       string `json:"post_content"`
 		PostFeaturedImage string `json:"post_featured_image"`
-		PostStource       string `json:"post_source"`
+		PostSource        string `json:"post_source"`
 		ImportedData      string `json:"imported_data"`
 		PostViews         int    `json:"views"`
 		Deleted           bool   `json:"-"`
@@ -21,8 +21,9 @@ type (
 		PostCategory     string `json:"post_category"`
 		PostShortContent string `json:"post_short_content"`
 		PostContent      string `json:"post_content"`
-		PostStource      string `json:"post_source"`
+		PostSource       string `json:"post_source"`
 		ImportedData     string `json:"imported_data"`
+		PostViews        int    `json:"views"`
 	}
 
 	// gets
@@ -48,7 +49,8 @@ type (
 		PostCategory     string `json:"post_category"`
 		PostShortContent string `json:"post_short_content"`
 		PostContent      string `json:"post_content"`
-		PostStource      string `json:"post_source"`
+		PostSource       string `json:"post_source"`
+		PostViews        int    `json:"views"`
 		ImportedData     string `json:"imported_data"`
 	}
 
@@ -62,6 +64,12 @@ type (
 
 	GetPostsResponse struct {
 		Posts []*Post `json:"response"`
+	}
+
+	//
+
+	AddPostView struct {
+		PostId string `json:"post_id"`
 	}
 )
 

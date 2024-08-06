@@ -1,4 +1,4 @@
-package currencyService
+package service
 
 import (
 	"github.com/ruziba3vich/prosphere/internal/items/models/vidgets"

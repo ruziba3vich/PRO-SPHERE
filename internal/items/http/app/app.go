@@ -3,10 +3,17 @@ package app
 import (
 	"log"
 
+	sq "github.com/Masterminds/squirrel"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ruziba3vich/prosphere/internal/items/config"
 	"github.com/ruziba3vich/prosphere/internal/items/http/handlers"
+	"github.com/ruziba3vich/prosphere/internal/items/service"
 	"github.com/ruziba3vich/prosphere/internal/items/storage"
+	currencystorage "github.com/ruziba3vich/prosphere/internal/items/storage/currency"
+	poststorage "github.com/ruziba3vich/prosphere/internal/items/storage/posts"
+	"github.com/ruziba3vich/prosphere/internal/items/storage/rediso"
+	redisCl "github.com/ruziba3vich/prosphere/internal/pkg"
 )
 
 func Run(cfg *config.Config,
@@ -14,18 +21,48 @@ func Run(cfg *config.Config,
 
 	router := gin.Default()
 
-	// storages
+	postgres, err := storage.ConnectDB(cfg)
 
-	currencyStorage := storage.NewCurrencyStorage(cfg, logger)
+	// --------
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	redis, err := redisCl.NewRedisDB(cfg)
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	sqrl := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 	// handlers
 
-	currencyHandler := handlers.NewCurrencyHandler(currencyStorage, logger)
+	currencyHandler := handlers.NewCurrencyHandler(service.New(
+		currencystorage.NewCurrencyStorage(cfg, logger),
+	), logger)
+
+	postHandler := handlers.NewPostHandler(
+		service.NewPostService(
+			poststorage.NewPostStorage(rediso.NewPostCache(redis, logger), postgres, sqrl, logger),
+		),
+		logger)
 
 	// routers
 
-	router.GET("/currency/:ccy", currencyHandler.GetCurrencyByCcy)
-	router.GET("/currency", currencyHandler.GetAllCurrenciesHandler)
+	currencyRouter := router.Group("/currency")
+
+	currencyRouter.GET("/:ccy", currencyHandler.GetCurrencyByCcy)
+	currencyRouter.GET("", currencyHandler.GetAllCurrenciesHandler)
+
+	postsRouter := router.Group("/posts")
+
+	postsRouter.POST("", postHandler.CreatePost)
+	postsRouter.POST("/add/view", postHandler.AddPostView)
+	postsRouter.GET("/:post_id", postHandler.GetPostById)
+	postsRouter.GET("", postHandler.GetAllPosts)
+	postsRouter.GET("/publisher/:publisher_id", postHandler.GetPostByPublisherId)
+	postsRouter.PUT("/:id", postHandler.UpdatePost)
+	postsRouter.DELETE("/delete/:post_id", postHandler.DeletePost)
 
 	// run
 	if err := router.Run(cfg.Server.Port); err != nil {

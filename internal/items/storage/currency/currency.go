@@ -1,4 +1,4 @@
-package storage
+package currencystorage
 
 import (
 	"encoding/json"

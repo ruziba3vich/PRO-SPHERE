@@ -14,5 +14,6 @@ type (
 		GetAllPosts(context.Context, *posts.GetAllPostsRequest) (*posts.GetPostsResponse, error)
 		UpdatePost(context.Context, *posts.UpdatePostRequest) (*posts.Post, error)
 		DeletePost(context.Context, *posts.DeletePostRequest) (*posts.Post, error)
+		AddPostView(context.Context, *posts.AddPostView) (*posts.Post, error)
 	}
 )
