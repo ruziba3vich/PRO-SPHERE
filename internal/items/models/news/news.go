@@ -1,4 +1,4 @@
-package models
+package newsmodels
 
 type (
 	News struct {
