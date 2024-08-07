@@ -57,12 +57,12 @@ func Run(cfg *config.Config,
 	postsRouter := router.Group("/posts")
 
 	postsRouter.POST("", postHandler.CreatePost)
-	postsRouter.POST("/add/view", postHandler.AddPostView)
+	postsRouter.POST("/add/view/:post_id", postHandler.AddPostView)
 	postsRouter.GET("/:post_id", postHandler.GetPostById)
 	postsRouter.GET("", postHandler.GetAllPosts)
 	postsRouter.GET("/publisher/:publisher_id", postHandler.GetPostByPublisherId)
-	postsRouter.PUT("/:id", postHandler.UpdatePost)
-	postsRouter.DELETE("/delete/:post_id", postHandler.DeletePost)
+	postsRouter.PUT("/:post_id", postHandler.UpdatePost)
+	postsRouter.DELETE("/:post_id", postHandler.DeletePost)
 
 	// run
 	if err := router.Run(cfg.Server.Port); err != nil {

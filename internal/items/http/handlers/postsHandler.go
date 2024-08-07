@@ -59,7 +59,7 @@ func (h *PostHandler) UpdatePost(ctx *gin.Context) {
 	}
 
 	var req posts.UpdatePostRequest
-	if err := ctx.BindJSON(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		h.logger.Println("Error binding request:", err)
 		ctx.JSON(http.StatusBadRequest, errors.ProError{
 			Message: "Invalid request body",
@@ -68,14 +68,6 @@ func (h *PostHandler) UpdatePost(ctx *gin.Context) {
 		return
 	}
 	req.PostId = postId
-	if err := ctx.BindJSON(&req); err != nil {
-		h.logger.Println("Error binding request:", err)
-		ctx.JSON(http.StatusBadRequest, errors.ProError{
-			Message: "Invalid request body",
-			Err:     err.Error(),
-		})
-		return
-	}
 	post, err := h.storage.UpdatePost(ctx, &req)
 	if err != nil {
 		h.logger.Println("Error updating post:", err)
@@ -113,7 +105,11 @@ func (h *PostHandler) GetPostById(ctx *gin.Context) {
 }
 
 func (h *PostHandler) GetAllPosts(ctx *gin.Context) {
-	response, err := h.storage.GetAllPosts(ctx, &posts.GetAllPostsRequest{})
+	page, limit := ctx.Query("page"), ctx.Query("limit")
+	response, err := h.storage.GetAllPosts(ctx, &posts.GetAllPostsRequest{
+		Page:  page,
+		Limit: limit,
+	})
 	if err != nil {
 		h.logger.Println("Error retrieving posts:", err)
 		ctx.JSON(http.StatusInternalServerError, errors.ProError{

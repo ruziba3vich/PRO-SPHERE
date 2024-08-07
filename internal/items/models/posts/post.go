@@ -12,7 +12,7 @@ type (
 		PostSource        string `json:"post_source"`
 		ImportedData      string `json:"imported_data"`
 		PostViews         int    `json:"views"`
-		Deleted           bool   `json:"-"`
+		Deleted           bool   `json:"deleted"`
 	}
 
 	CreatePostRequest struct {
@@ -37,8 +37,8 @@ type (
 	}
 
 	GetAllPostsRequest struct {
-		Page  int
-		Limit int
+		Page  string
+		Limit string
 	}
 
 	// udates
