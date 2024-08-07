@@ -337,6 +337,11 @@ func (p *PostStorage) UpdatePost(ctx context.Context, req *posts.UpdatePostReque
 
 func (p *PostStorage) DeletePost(ctx context.Context, req *posts.DeletePostRequest) (*posts.Post, error) {
 	tx, err := p.postgres.BeginTx(ctx, nil)
+	if err != nil {
+		p.logger.Println("Error starting transaction:", err)
+		return nil, err
+	}
+	defer tx.Rollback()
 	post, err := p.GetPostById(ctx, &posts.GetPostByIdRequest{PostId: req.PostId})
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -344,11 +349,6 @@ func (p *PostStorage) DeletePost(ctx context.Context, req *posts.DeletePostReque
 		}
 		return nil, err
 	}
-	if err != nil {
-		p.logger.Println("Error starting transaction:", err)
-		return nil, err
-	}
-	defer tx.Rollback()
 
 	query, args, err := p.builder.Update("posts").
 		Set("deleted", true).
@@ -370,7 +370,6 @@ func (p *PostStorage) DeletePost(ctx context.Context, req *posts.DeletePostReque
 		p.logger.Println("No rows affected:", err)
 		return nil, err
 	}
-
 
 	if err := p.rediso.DeletePost(ctx, req); err != nil {
 		p.logger.Println("Error deleting post from Redis:", err)
