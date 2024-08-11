@@ -12,6 +12,7 @@ type (
 		Database DatabaseConfig
 		Redis    RedisConfig
 		Apis     APIs
+		Search   Search
 	}
 
 	ServerConfig struct {
@@ -35,6 +36,11 @@ type (
 		WeatherApi  string
 		CurrencyApi string
 	}
+
+	Search struct {
+		Api   string
+		Token string
+	}
 )
 
 func (c *Config) Load() error {
@@ -52,6 +58,8 @@ func (c *Config) Load() error {
 	c.Redis.Port = os.Getenv("REDIS_PORT")
 	c.Apis.CurrencyApi = os.Getenv("CURRENCY_API")
 	c.Apis.WeatherApi = os.Getenv("WEATHER_API")
+	c.Search.Api = os.Getenv("SEARCH_API")
+	c.Search.Token = os.Getenv("SEARCH_TOKEN")
 
 	return nil
 }

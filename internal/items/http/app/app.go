@@ -13,6 +13,7 @@ import (
 	currencystorage "github.com/ruziba3vich/prosphere/internal/items/storage/currency"
 	poststorage "github.com/ruziba3vich/prosphere/internal/items/storage/posts"
 	"github.com/ruziba3vich/prosphere/internal/items/storage/rediso"
+	"github.com/ruziba3vich/prosphere/internal/items/storage/search"
 	redisCl "github.com/ruziba3vich/prosphere/internal/pkg"
 )
 
@@ -47,6 +48,14 @@ func Run(cfg *config.Config,
 		),
 		logger)
 
+	searchHandler := handlers.NewSearchHandler(
+		service.NewSearchService(
+			search.NewSearchStorage(postgres, logger, cfg),
+			logger,
+		),
+		logger,
+	)
+
 	// routers
 
 	currencyRouter := router.Group("/currency")
@@ -63,6 +72,10 @@ func Run(cfg *config.Config,
 	postsRouter.GET("/publisher/:publisher_id", postHandler.GetPostByPublisherId)
 	postsRouter.PUT("/:post_id", postHandler.UpdatePost)
 	postsRouter.DELETE("/:post_id", postHandler.DeletePost)
+
+	searchRouter := router.Group("/search")
+
+	searchRouter.POST("/text", searchHandler.SearchItem)
 
 	// run
 	if err := router.Run(cfg.Server.Port); err != nil {
