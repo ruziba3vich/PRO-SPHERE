@@ -1,0 +1,166 @@
+version: '3.9'
+services:
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6378:6379"
+    volumes:
+      - rd:/var/lib/redis/data
+    networks:
+      - pro-sphere
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  postgres-db:
+    container_name: postgres
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1702
+    ports:
+      - "5434:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d # Add initialization folder
+    networks:
+      - pro-sphere
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  migrate-admin:
+    image: migrate/migrate
+    command: [
+      "-path", "/migrations/admin",
+      "-database", "postgres://postgres:1702@postgres-db:5432/posts_db?sslmode=disable",
+      "up"
+    ]
+    volumes:
+      - ./admin/migrations:/migrations/admin
+    networks:
+      - pro-sphere
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  migrate-auth:
+    image: migrate/migrate
+    command: [
+      "-path", "/migrations/auth",
+      "-database", "postgres://postgres:1702@postgres-db:5432/proidusers?sslmode=disable",
+      "up"
+    ]
+    volumes:
+      - ./auth/migrations:/migrations/auth
+    networks:
+      - pro-sphere
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  search:
+    container_name: search
+    build: ./searching
+    ports:
+      - "50050:50050"
+    networks:
+      - pro-sphere
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50050/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  auth:
+    container_name: auth
+    build: ./auth
+    ports:
+      - "50052:50052"
+    networks:
+      - pro-sphere
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50052/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=1702
+      - DB_NAME=proidusers # Points to proidusers database
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  admin:
+    container_name: admin
+    build: ./admin
+    ports:
+      - "50051:50051"
+    networks:
+      - pro-sphere
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:50051/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=1702
+      - DB_NAME=posts_db # Points to posts_db database
+    volumes:
+      - feed_category_images:/app/images/feedCategories/icons
+      - feed_images:/app/images/feed/logos
+
+  gateway:
+    container_name: gateway
+    build: ./apigateway
+    depends_on:
+      - search
+      - admin
+    ports:
+      - "7777:7777"
+    networks:
+      - pro-sphere
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7777/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - feed_category_images:/app/images/feedCategories/icons
+      - feed_images:/app/images/feed/logos
+      
+networks:
+  pro-sphere:
+    driver: bridge
+
+volumes:
+  db:
+  rd:
+  feed_category_images:
+  feed_images:
+  

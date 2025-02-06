@@ -1,0 +1,1598 @@
+basePath: /
+definitions:
+  auth.CreateUserRequest:
+    properties:
+      new_user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.CreateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.GetAllUsersResponse:
+    properties:
+      total_items:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/auth.User'
+        type: array
+    type: object
+  auth.GetUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.UpdateUserByIDRequest:
+    properties:
+      update_user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.UpdateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/auth.User'
+    type: object
+  auth.User:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+      pro_id:
+        type: integer
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  feeds.CreateFeedCategoryRequest:
+    properties:
+      icon_url:
+        type: string
+      translations:
+        items:
+          $ref: '#/definitions/feeds.Translation'
+        type: array
+    type: object
+  feeds.CreateFeedItem:
+    properties:
+      description:
+        type: string
+      feed_id:
+        type: integer
+      image_url:
+        type: string
+      lang:
+        type: string
+      link:
+        type: string
+      published_at:
+        type: string
+      title:
+        type: string
+    type: object
+  feeds.CreateFeedRequest:
+    properties:
+      base_url:
+        type: string
+      logo_url:
+        type: string
+      logo_url_id:
+        type: string
+      max_items:
+        type: integer
+      priority:
+        type: integer
+      translation:
+        items:
+          $ref: '#/definitions/feeds.CreateFeedTransalation'
+        type: array
+    type: object
+  feeds.CreateFeedTransalation:
+    properties:
+      description:
+        type: string
+      lang:
+        type: string
+      title:
+        type: string
+    type: object
+  feeds.Feed:
+    properties:
+      base_url:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      logo_url:
+        type: string
+      logo_url_id:
+        type: string
+      max_items:
+        type: integer
+      priority:
+        type: integer
+      translation:
+        items:
+          $ref: '#/definitions/feeds.FeedTransalation'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  feeds.FeedCategoriesResponse:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/feeds.FeedCategory'
+        type: array
+    type: object
+  feeds.FeedCategory:
+    properties:
+      icon_id:
+        type: string
+      icon_url:
+        type: string
+      id:
+        type: integer
+      translations:
+        items:
+          $ref: '#/definitions/feeds.Translation'
+        type: array
+    type: object
+  feeds.FeedContent:
+    properties:
+      category_id:
+        type: integer
+      feed_id:
+        type: integer
+      id:
+        type: integer
+      lang:
+        type: string
+      link:
+        type: string
+    type: object
+  feeds.FeedContentsRespose:
+    properties:
+      contents:
+        items:
+          $ref: '#/definitions/feeds.FeedContent'
+        type: array
+    type: object
+  feeds.FeedItem:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      feed_id:
+        type: integer
+      id:
+        type: integer
+      image_url:
+        type: string
+      lang:
+        type: string
+      link:
+        type: string
+      published_at:
+        type: string
+      title:
+        type: string
+      update_at:
+        type: string
+    type: object
+  feeds.FeedItemsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/feeds.FeedItem'
+        type: array
+    type: object
+  feeds.FeedItemsUpdate:
+    properties:
+      description:
+        type: string
+      feed_id:
+        type: integer
+      image_url:
+        type: string
+      lang:
+        type: string
+      link:
+        type: string
+      published_at:
+        type: string
+      title:
+        type: string
+    type: object
+  feeds.FeedTransalation:
+    properties:
+      description:
+        type: string
+      feed_id:
+        type: integer
+      id:
+        type: integer
+      lang:
+        type: string
+      title:
+        type: string
+    type: object
+  feeds.FeedsResponse:
+    properties:
+      feeds:
+        items:
+          $ref: '#/definitions/feeds.Feed'
+        type: array
+    type: object
+  feeds.Translation:
+    properties:
+      lang:
+        type: string
+      name:
+        type: string
+    type: object
+  feeds.UpdateFeedRequest:
+    properties:
+      base_url:
+        type: string
+      id:
+        type: integer
+      logo_url:
+        type: string
+      logo_url_id:
+        type: string
+      max_items:
+        type: integer
+      priority:
+        type: integer
+      translation:
+        items:
+          $ref: '#/definitions/feeds.FeedTransalation'
+        type: array
+    type: object
+  handlers.UpdateFContent:
+    properties:
+      category_id:
+        type: integer
+      lang:
+        type: string
+      link:
+        type: string
+    type: object
+  searching.ImageResponse:
+    properties:
+      images:
+        description: List of image results
+        items:
+          $ref: '#/definitions/searching.ImageResult'
+        type: array
+      total_items:
+        type: integer
+    type: object
+  searching.ImageResult:
+    properties:
+      height:
+        description: Image height
+        type: integer
+      image_url:
+        description: URL of the image
+        type: string
+      title:
+        description: Title of the image
+        type: string
+      width:
+        description: Image width
+        type: integer
+    type: object
+  searching.Result:
+    properties:
+      content:
+        description: Description/content snippet
+        type: string
+      direct_link:
+        description: Direct link to the result
+        type: string
+      display_link:
+        description: Display link (e.g., domain)
+        type: string
+      fav_icon_url:
+        description: URL of the favicon
+        type: string
+      primary_image_url:
+        description: URL of the primary image
+        type: string
+      thumbnails:
+        description: List of thumbnails
+        items:
+          $ref: '#/definitions/searching.SearchThumbnail'
+        type: array
+      title:
+        description: Title of the result
+        type: string
+    type: object
+  searching.SearchResponse:
+    properties:
+      results:
+        description: List of generic search results
+        items:
+          $ref: '#/definitions/searching.Result'
+        type: array
+      total_items:
+        type: integer
+    type: object
+  searching.SearchThumbnail:
+    properties:
+      height:
+        description: Thumbnail height
+        type: integer
+      src:
+        description: Thumbnail URL
+        type: string
+      width:
+        description: Thumbnail width
+        type: integer
+    type: object
+  searching.VideoResult:
+    properties:
+      channel_title:
+        description: Channel name
+        type: string
+      channel_url:
+        description: Channel URL
+        type: string
+      description:
+        type: string
+      publish_time:
+        description: Publish time of the video
+        type: string
+      thumbnail_url:
+        description: Thumbnail URL
+        type: string
+      thumbnails:
+        allOf:
+        - $ref: '#/definitions/searching.VideoThumbnails'
+        description: Thumbnails of the video
+      title:
+        description: Video title
+        type: string
+      video_url:
+        description: URL to the video
+        type: string
+    type: object
+  searching.VideoSearchResponse:
+    properties:
+      next_page_token:
+        description: Token for next page
+        type: string
+      total_items:
+        type: integer
+      videos:
+        description: List of video results
+        items:
+          $ref: '#/definitions/searching.VideoResult'
+        type: array
+    type: object
+  searching.VideoThumbnails:
+    properties:
+      default:
+        allOf:
+        - $ref: '#/definitions/searching.SearchThumbnail'
+        description: Default quality thumbnail
+      high:
+        allOf:
+        - $ref: '#/definitions/searching.SearchThumbnail'
+        description: High quality thumbnail
+      medium:
+        allOf:
+        - $ref: '#/definitions/searching.SearchThumbnail'
+        description: Medium quality thumbnail
+    type: object
+info:
+  contact: {}
+  description: This is pro-sphere browser's APIs
+  title: Pro-Sphere
+  version: "1.0"
+paths:
+  /v1/admin/feeds/categories/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new feed category with name and icon URL
+      parameters:
+      - description: Create Feed Category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.CreateFeedCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/feeds.FeedCategory'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new feed category
+      tags:
+      - Feed Categories
+  /v1/admin/feeds/categories/{id}:
+    delete:
+      description: Delete a feed category by its ID
+      parameters:
+      - description: Feed Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete feed category
+      tags:
+      - Feed Categories
+    get:
+      description: Retrieve a specific feed category by its ID
+      parameters:
+      - description: Feed Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedCategory'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feed category by ID
+      tags:
+      - Feed Categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing feed category
+      parameters:
+      - description: Feed Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Feed Category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.FeedCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedCategory'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update feed category
+      tags:
+      - Feed Categories
+  /v1/admin/feeds/categories/all:
+    get:
+      description: Retrieve all feed categories with pagination
+      parameters:
+      - default: 10
+        description: Limit of categories per page
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: uz
+        description: lang
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedCategoriesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all feed categories
+      tags:
+      - Feed Categories
+  /v1/admin/feeds/categories/icon:
+    get:
+      consumes:
+      - application/json
+      description: Serving feed category icon by its name and extension
+      parameters:
+      - default: .png
+        description: icon uuid with extension
+        in: query
+        name: icon_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/feeds.FeedCategory'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Serving feed category icon
+      tags:
+      - Feed Categories
+  /v1/admin/feeds/content:
+    get:
+      consumes:
+      - application/json
+      description: Gets exiting content by its id.
+      parameters:
+      - description: Feed Content
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedContent'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Feed Content
+      tags:
+      - Feed
+    post:
+      consumes:
+      - application/json
+      description: Adds new content to a feed.
+      parameters:
+      - description: Feed Content
+        in: body
+        name: feedContent
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.FeedContent'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedContent'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add Feed Content
+      tags:
+      - Feed
+  /v1/admin/feeds/content/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes exiting content by its id.
+      parameters:
+      - description: Feed Content id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedContent'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete Feed Content
+      tags:
+      - Feed
+    put:
+      consumes:
+      - application/json
+      description: Updates new content to a feed.
+      parameters:
+      - description: feed content id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Feed Content
+        in: body
+        name: feedContent
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateFContent'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedContent'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Feed Content
+      tags:
+      - Feed
+  /v1/admin/feeds/content/all:
+    get:
+      consumes:
+      - application/json
+      description: Gets exiting contents belongs to Feed.
+      parameters:
+      - description: Feed ID
+        in: query
+        name: feedId
+        required: true
+        type: string
+      - description: Feed Category ID
+        in: query
+        name: categoryId
+        type: string
+      - description: Feed content language
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedContentsRespose'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Feed Contents
+      tags:
+      - Feed
+  /v1/admin/feeds/feed/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new feed with detailed information
+      parameters:
+      - description: Create Feed
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.CreateFeedRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/feeds.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new feed
+      tags:
+      - Feeds
+  /v1/admin/feeds/feed/{id}:
+    delete:
+      description: Delete a feed by its ID
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete feed
+      tags:
+      - Feeds
+    get:
+      description: Retrieve a specific feed by its ID
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feed by ID
+      tags:
+      - Feeds
+    put:
+      consumes:
+      - application/json
+      description: Update an existing feed
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Feed
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.UpdateFeedRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update feed
+      tags:
+      - Feeds
+  /v1/admin/feeds/feed/all:
+    get:
+      description: Retrieve all feeds with pagination
+      parameters:
+      - default: 10
+        description: Limit of feeds per page
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: true
+        description: Priority config
+        in: query
+        name: priority
+        type: boolean
+      - default: uz
+        description: Lang
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all feeds
+      tags:
+      - Feeds
+  /v1/admin/feeds/items/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new feed item
+      parameters:
+      - description: Create Feed Item
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.CreateFeedItem'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/feeds.FeedItem'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new feed item
+      tags:
+      - Feed Items
+  /v1/admin/feeds/items/{id}:
+    delete:
+      description: Delete a feed item by its ID
+      parameters:
+      - description: Feed Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Feed item deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Feed item not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a feed item
+      tags:
+      - Feed Items
+    get:
+      description: Retrieve a specific feed item by its ID
+      parameters:
+      - description: Feed Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedItem'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feed item by ID
+      tags:
+      - Feed Items
+    put:
+      consumes:
+      - application/json
+      description: Update an existing feed item by its ID
+      parameters:
+      - description: Feed Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Feed Item
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/feeds.FeedItemsUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedItem'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing feed item
+      tags:
+      - Feed Items
+  /v1/admin/feeds/items/all/{feed_id}:
+    get:
+      description: Retrieve all feed items belong to feed with pagination support
+      parameters:
+      - description: Limit number of items
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: feed id
+        in: path
+        name: feed_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/feeds.FeedItemsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all feed items by feed id
+      tags:
+      - Feed Items
+  /v1/auth/oauth/admin/callback:
+    get:
+      description: Processes the OAuth callback and redirects to the configured URL
+        with a code
+      parameters:
+      - description: Authorization Code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect URL with code
+          schema:
+            type: string
+        "400":
+          description: Invalid code
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Handle OAuth callback For Admin
+      tags:
+      - Authentication
+  /v1/auth/oauth/callback:
+    get:
+      description: Processes the OAuth callback and redirects to the configured URL
+        with a code
+      parameters:
+      - description: Authorization Code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect URL with code
+          schema:
+            type: string
+        "400":
+          description: Invalid code
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Handle OAuth callback
+      tags:
+      - Authentication
+  /v1/auth/oauth/start:
+    get:
+      description: Initiates the OAuth process and redirects the user to the Pro ID
+        login page
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect URL
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Start OAuth flow and redirect to Pro ID
+      tags:
+      - Authentication
+  /v1/auth/oauth/tokens:
+    get:
+      description: Retrieves tokens using the provided authorization code
+      parameters:
+      - description: Authorization Code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tokens
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Invalid code
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get tokens by code
+      tags:
+      - Authentication
+  /v1/search:
+    get:
+      consumes:
+      - application/json
+      description: Search elements using Google Search Custom JSON API
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page_number
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/searching.SearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search elements
+      tags:
+      - Searching
+  /v1/search/images:
+    get:
+      consumes:
+      - application/json
+      description: Search images using Google Custom Search API
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page_number
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/searching.ImageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search images
+      tags:
+      - Searching
+  /v1/search/youtube:
+    get:
+      consumes:
+      - application/json
+      description: Search videos using YouTube Data API
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      - description: Maximum number of results
+        in: query
+        name: max_results
+        type: integer
+      - description: Token for fetching the next page of results
+        in: query
+        name: next_page_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/searching.VideoSearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search videos on YouTube
+      tags:
+      - Searching
+  /v1/users:
+    get:
+      description: Retrieves a list of all users with optional filters
+      parameters:
+      - description: First Name
+        in: query
+        name: first_name
+        type: string
+      - description: Last Name
+        in: query
+        name: last_name
+        type: string
+      - description: Gender
+        in: query
+        name: gender
+        type: string
+      - description: Role
+        in: query
+        name: role
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            $ref: '#/definitions/auth.GetAllUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all users
+      tags:
+      - User Management
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/auth.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/auth.CreateUserResponse'
+        "400":
+          description: Invalid user data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new user
+      tags:
+      - User Management
+  /v1/users/{id}:
+    delete:
+      description: Deletes a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete user by ID
+      tags:
+      - User Management
+    put:
+      consumes:
+      - application/json
+      description: Updates a user's information by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UpdateUserByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/auth.UpdateUserResponse'
+        "400":
+          description: Invalid user data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user by ID
+      tags:
+      - User Management
+  /v1/users/me:
+    get:
+      description: Retrieves a user's details by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User data
+          schema:
+            $ref: '#/definitions/auth.GetUserResponse'
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - User Management
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

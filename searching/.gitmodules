@@ -1,0 +1,3 @@
+[submodule "protos"]
+    path = protos
+    url = https://github.com/Javohir-A/pro-spefer-protos.git
