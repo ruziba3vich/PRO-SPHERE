@@ -1,12 +1,9 @@
-[submodule "searching/protos"]
-	path = searching/protos
-	url = https://github.com/Javohir-A/pro-spefer-protos.git
-[submodule "apigateway/protos"]
-	path = apigateway/protos
+[submodule "protos"]
+	path = protos
 	url = https://github.com/Javohir-A/pro-spefer-protos.git
 [submodule "admin/protos"]
 	path = admin/protos
 	url = https://github.com/Javohir-A/pro-spefer-protos.git
-[submodule "auth/protos"]
-	path = auth/protos
+[submodule "apigateway/protos"]
+	path = apigateway/protos
 	url = https://github.com/Javohir-A/pro-spefer-protos.git
