@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Repositoryni checkout qilish
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    # 2. Go muhitini sozlash
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.23.1'
+
+    # 4. Serverga ulanish va joylashtirish
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        port: 22
+        script: |
+
+          echo "📦 Kodni yangilayapman..."
+          cd /root/sphere_ci_cd_backend
+          git pull ${{secrets.GIT_REPO}}  main
+          git chekout main
+
+
+          #  echo "🔍 go.mod fayllarini qidiryapman..."
+          #  find ./sphere_ci_cd_backend -name "go.mod" -execdir go mod tidy \;
+
+          #echo "🔄 Docker build keshlarini tozalayapman..."
+          #docker builder prune -af
+
+          echo "🛑 Ishlayotgan xizmatlarni to'xtatish..."
+           docker-compose -f docker-compose.yml down
+
+          echo "🚀 Docker image’larni yaratish va xizmatlarni ishga tushirish..."
+          docker-compose up --build -d
+          echo "🧹 Eskirdgan konteyner va imijlarni tozalayapman..."
+          # docker system prune -af
