@@ -10,3 +10,6 @@
 [submodule "auth/protos"]
 	path = auth/protos
 	url = https://github.com/Javohir-A/pro-spefer-protos.git
+[submodule "admin/pro-spefer-protos"]
+	path = admin/pro-spefer-protos
+	url = https://github.com/Javohir-A/pro-spefer-protos.git
