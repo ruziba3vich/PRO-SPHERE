@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -13,168 +12,116 @@ import (
 	"go.uber.org/zap"
 )
 
-type (
-	FeedItemsService struct {
-		feedRepo   repo.FeedsRepository
-		fItemsRepo repo.FeedItemsRepository
-		logger     *zap.Logger
-		feedParser *gofeed.Parser
-	}
-)
+type FeedItemsService struct {
+	feedRepo   repo.FeedsRepository
+	fItemsRepo repo.FeedItemsRepository
+	logger     *zap.Logger
+	feedParser *gofeed.Parser
+}
 
 func NewFeedItemsService(feedRepo repo.FeedsRepository, fItemsRepo repo.FeedItemsRepository, logger *zap.Logger, parser *gofeed.Parser) *FeedItemsService {
 	return &FeedItemsService{
-		feedParser: parser,
 		feedRepo:   feedRepo,
 		fItemsRepo: fItemsRepo,
 		logger:     logger,
+		feedParser: parser,
 	}
 }
 
+// fetchAndParseFeed retrieves feed content from a URL and parses it.
+func (f *FeedItemsService) fetchAndParseFeed(ctx context.Context, feedID int) ([]*models.FeedItemResponse, error) {
+	// Fetch feed details from the repository
+	feed, err := f.feedRepo.GetFeed(ctx, feedID)
+	if err != nil {
+		f.logger.Error("Failed to get feed from repository", zap.Int("feedID", feedID), zap.Error(err))
+		return nil, err
+	}
+
+	// Validate feed link
+	if feed.BaseUrl == "" {
+		return nil, errors.New("invalid feed link")
+	}
+
+	// Make HTTP request
+	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, feed.BaseUrl, nil)
+	if err != nil {
+		f.logger.Error("Failed to create HTTP request", zap.String("feedLink", feed.BaseUrl), zap.Error(err))
+		return nil, err
+	}
+
+	httpResponse, err := http.DefaultClient.Do(httpRequest)
+	if err != nil || httpResponse.Body == nil {
+		f.logger.Error("Failed to fetch feed", zap.String("feedLink", feed.BaseUrl), zap.Error(err))
+		return nil, errors.New("failed to fetch feed or empty response")
+	}
+	defer httpResponse.Body.Close()
+
+	// Parse feed content
+	parsedFeed, err := f.feedParser.Parse(httpResponse.Body)
+	if err != nil {
+		f.logger.Error("Failed to parse feed content", zap.String("feedLink", feed.BaseUrl), zap.Error(err))
+		return nil, err
+	}
+
+	// Transform parsed feed items into FeedItemResponse
+	var feedItems []*models.FeedItemResponse
+	for _, item := range parsedFeed.Items {
+		feedItems = append(feedItems, &models.FeedItemResponse{
+			FeedID:      feedID,
+			Title:       item.Title,
+			Link:        item.Link,
+			Description: item.Description,
+			ImageURL:    item.Image.URL,
+			PublishedAt: item.Published,
+		})
+	}
+
+	return feedItems, nil
+}
+
+// FetchFeedItems retrieves and stores feed items in the database.
 func (f *FeedItemsService) FetchFeedItems(ctx context.Context, feedID int) ([]*models.FeedItemResponse, error) {
-	// Fetch feed details from the repository
-	// feed, err := f.feedRepo.GetFeed(ctx, feedID)
-	// if err != nil {
-	// 	f.logger.Error("Error occurred during getting feed", zap.Error(err))
-	// 	return nil, err
-	// }
-	f.logger.Info("Fetched feed from database", zap.Any("", "feed"))
-	// Create HTTP request to fetch the feed
-	httpRequest, err := http.NewRequest(http.MethodGet, "feed.Link", nil)
+	feedItems, err := f.fetchAndParseFeed(ctx, feedID)
 	if err != nil {
-		f.logger.Error("Error during creating new HTTP request", zap.Error(err))
 		return nil, err
 	}
 
-	// Execute the HTTP request
-	httpResponse, err := http.DefaultClient.Do(httpRequest)
-	if err != nil {
-		f.logger.Error("Error while getting HTTP response", zap.Error(err))
-		return nil, err
-	}
-
-	if httpResponse == nil || httpResponse.Body == nil {
-		return nil, errors.New("invalid http response or empty body")
-	}
-
-	defer httpResponse.Body.Close()
-	// Parse the feed using gofeed
-	parsedFeed, err := f.feedParser.Parse(httpResponse.Body)
-	if err != nil {
-		f.logger.Error("Error while parsing feed items", zap.Error(err))
-		return nil, err
-	}
-	f.logger.Info("Feed service: ", zap.Any("Feed Items", parsedFeed.String()))
-
-	// Map parsed feed items to your FeedItemResponse model
-	var feedItems []*models.FeedItemResponse
-	for _, item := range parsedFeed.Items {
-		feedItem := &models.FeedItemResponse{
-			FeedID:      feedID,
-			Title:       item.Title,
-			Link:        item.Link,
-			Description: item.Description,
-			ImageURL:    item.Image.URL,
-			PublishedAt: item.Published,
-			CreatedAt:   "",
-			UpdatedAt:   "",
-		}
-
-		feedItems = append(feedItems, feedItem)
-	}
-	go func() {
-		for _, item := range feedItems {
-			itemCtx, _ := context.WithTimeout(context.Background(), time.Millisecond*200)
-
-			if _, err := f.fItemsRepo.CreateFeedItem(itemCtx, &models.FeedItem{
-				FeedID:      feedID,
-				Title:       item.Title,
-				ImageURL:    item.ImageURL,
-				Description: item.Description,
-				PublishedAt: item.PublishedAt,
-			}); err != nil {
-				f.logger.Error("Error while Inserting feed item into Database",
-					zap.Error(err))
-			}
-
-		}
-	}()
+	// Store fetched feed items asynchronously
+	go f.storeFeedItems(feedID, feedItems)
 
 	return feedItems, nil
 }
 
-// func (f *FeedItemsService) SaveFetchedItems() (models.Feed, error) {
-
-// }
-
+// UpdateFeed updates the feed by fetching new items and storing them.
 func (f *FeedItemsService) UpdateFeed(ctx context.Context, feedID int) ([]*models.FeedItemResponse, error) {
-	// Fetch feed details from the repository
-	// feed, err := f.feedRepo.GetFeed(ctx, feedID)
-	// if err != nil {
-	// 	f.logger.Error("Error occurred during getting feed", zap.Error(err))
-	// 	return nil, err
-	// }
-	f.logger.Info("Fetched feed from database", zap.Any("", "feed"))
-	// Create HTTP request to fetch the feed
-	httpRequest, err := http.NewRequest(http.MethodGet, "feed.Link", nil)
+	feedItems, err := f.fetchAndParseFeed(ctx, feedID)
 	if err != nil {
-		f.logger.Error("Error during creating new HTTP request", zap.Error(err))
 		return nil, err
 	}
 
-	// Execute the HTTP request
-	httpResponse, err := http.DefaultClient.Do(httpRequest)
-	if err != nil {
-		f.logger.Error("Error while getting HTTP response", zap.Error(err))
-		return nil, err
-	}
+	// Store fetched feed items asynchronously
+	go f.storeFeedItems(feedID, feedItems)
 
-	if httpResponse == nil || httpResponse.Body == nil {
-		return nil, errors.New("invalid http response or empty body")
-	}
+	return feedItems, nil
+}
 
-	defer httpResponse.Body.Close()
-	// Parse the feed using gofeed
-	parsedFeed, err := f.feedParser.Parse(httpResponse.Body)
-	if err != nil {
-		f.logger.Error("Error while parsing feed items", zap.Error(err))
-		return nil, err
-	}
-	f.logger.Info("Feed service: ", zap.Any("Feed Items", parsedFeed.String()))
+// storeFeedItems saves feed items into the database.
+func (f *FeedItemsService) storeFeedItems(feedID int, feedItems []*models.FeedItemResponse) {
+	for _, item := range feedItems {
+		itemCtx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+		defer cancel()
 
-	// Map parsed feed items to your FeedItemResponse model
-	var feedItems []*models.FeedItemResponse
-	for _, item := range parsedFeed.Items {
-		feedItem := &models.FeedItemResponse{
+		_, err := f.fItemsRepo.CreateFeedItem(itemCtx, &models.FeedItem{
 			FeedID:      feedID,
 			Title:       item.Title,
 			Link:        item.Link,
+			ImageURL:    item.ImageURL,
 			Description: item.Description,
-			ImageURL:    item.Image.URL,
-			PublishedAt: item.Published,
-			CreatedAt:   "",
-			UpdatedAt:   "",
-		}
+			PublishedAt: item.PublishedAt,
+		})
 
-		feedItems = append(feedItems, feedItem)
+		if err != nil {
+			f.logger.Error("Failed to insert feed item into database", zap.String("title", item.Title), zap.Error(err))
+		}
 	}
-	go func() {
-		for _, item := range feedItems {
-			itemCtx, _ := context.WithTimeout(context.Background(), time.Millisecond*200)
-
-			if _, err := f.fItemsRepo.CreateFeedItem(itemCtx, &models.FeedItem{
-				FeedID:      feedID,
-				Title:       item.Title,
-				ImageURL:    item.ImageURL,
-				Description: item.Description,
-				PublishedAt: item.PublishedAt,
-			}); err != nil {
-				f.logger.Error("Error while Inserting feed item into Database",
-					zap.Error(err))
-			}
-
-		}
-	}()
-
-	return feedItems, nil
 }
